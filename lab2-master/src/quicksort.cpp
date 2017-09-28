@@ -130,10 +130,13 @@ int main() {
   auto pduration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(pduration);
   long parrallelTime = pduration_ms.count();
 
+  double speedupFactor = (double)quicksortTime / (double)parrallelTime;
+
   std::string quicksortCheck = checkSort(v1, 0, v1.size() - 1);
   std::string parrallelCheck = checkSort(v2, 0, v2.size() - 1);
   std::cout << "QuickSort " << quicksortCheck << "- Time: " << quicksortTime << std::endl;
   std::cout << "Parrallel Sort " << parrallelCheck << "- Time: " << parrallelTime << std::endl;
+  std::cout << "Speedup Factor = "<< speedupFactor << std::endl;
   std::cin.get();
   return 0;
 }

@@ -5,7 +5,20 @@
 double estimate_pi(int nsamples) {
 
   // YOUR CODE HERE
-
+	static std::default_random_engine rnd;
+	static std::uniform_real_distribution<double> dist(-1.0, 1.0);
+	int hits = 0;
+	int i = 0;
+	while (i < nsamples) {
+		double x = dist(rnd);
+		double y = dist(rnd);
+		double r = pow((x*x + y*y), 0.5);
+		if (r <= 1) {
+			hits++;
+		}
+		i++;
+	}
+	return ((double)hits / (double)nsamples)*4;
 }
 
 // generates a random sample and sets hits[idx]
@@ -17,7 +30,12 @@ void pi_sampler(std::vector<bool>& hits, int idx) {
   static std::uniform_real_distribution<double> dist(-1.0, 1.0);
 
   // YOUR CODE HERE
-
+	  double x = dist(rnd);
+	  double y = dist(rnd);
+	  double r = pow((x*x + y*y), 0.5);
+	  if (r <= 1) {
+		  hits[idx] = true;
+	  }
 }
 
 // naively uses multithreading to try to speed up computations
@@ -56,7 +74,16 @@ void pi_hits(std::vector<int>& hits, int idx, int nsamples) {
   static std::uniform_real_distribution<double> dist(-1.0, 1.0);
 
   // YOUR CODE HERE
-
+  int i = 0;
+  while (i < nsamples) {
+	  double x = dist(rnd);
+	  double y = dist(rnd);
+	  double r = pow((x*x + y*y), 0.5);
+	  if (r <= 1) {
+		  hits[idx] += 1;
+	  }
+	  i++;
+  }
 }
 
 // divides work among threads intelligently
@@ -96,9 +123,35 @@ double estimate_pi_multithread(int nsamples) {
 }
 
 int main() {
+	// Simply estimate pi
+	int numSamples = 1000000;
+	auto t1 = std::chrono::high_resolution_clock::now();
+	double pi = estimate_pi(numSamples);
+	auto t2 = std::chrono::high_resolution_clock::now();
+	auto duration = t2 - t1;
+	auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+	long ms = duration_ms.count();
+	std::cout << "Lame Estimate: " << pi << " Samples: " << numSamples << "  Time: " << ms << " ms." << std::endl;
 
-  double pi = estimate_pi(1000);
-  std::cout << "My estimate of PI is: " << pi << std::endl;
+	// Naively estimate pi
+	int numSamples2 = 1000;
+	auto t12 = std::chrono::high_resolution_clock::now();
+	double pi2 = estimate_pi_multithread_naive(numSamples2);
+	auto t22 = std::chrono::high_resolution_clock::now();
+	auto duration2 = t22 - t12;
+	auto duration_ms2 = std::chrono::duration_cast<std::chrono::milliseconds>(duration2);
+	long ms2 = duration_ms2.count();
+	std::cout << "Naive Estimation: " << pi2 << " Samples: " << numSamples2 << "  Time: " << ms2 << " ms." << std::endl;
 
+	// Smartly estimate pi
+	int numSamples3 = 10000000;
+	auto t13 = std::chrono::high_resolution_clock::now();
+	double pi3 = estimate_pi_multithread(numSamples3);
+	auto t23 = std::chrono::high_resolution_clock::now();
+	auto duration3 = t23 - t13;
+	auto duration_ms3 = std::chrono::duration_cast<std::chrono::milliseconds>(duration3);
+	long ms3 = duration_ms3.count();
+	std::cout << "Smart Estimate: " << pi3 << " Samples: " << numSamples3 << "  Time: " << ms3 << " ms." << std::endl;
+	std::cin.get();
   return 0;
 }
