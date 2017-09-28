@@ -6,11 +6,26 @@
 // around a pivot and returns the pivot index
 int partition(std::vector<int>& data, int low, int high) {
   // your code here
+
+
+
+
 }
 
 // sorts elements low through high (inclusive) using a single thread
 void quicksort(std::vector<int>& data, int low, int high) {
   // your code here
+	int pivot = data[0];
+	int length = high - low - 1;
+	for (int i = 1; i < length; i++) {
+
+		if (data[i] <= pivot) {
+			
+		}
+		else {
+
+		}
+	}
 }
 
 // sorts elements low through high (inclusive) using multiple threads
